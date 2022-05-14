@@ -1,5 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Users } from './entities/users.entities';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { CreateUserDto } from './dto/create-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -24,11 +26,11 @@ export class UsersService {
     return user;
   }
 
-  create(createUserDto: Users) {
-    this.users.push(createUserDto);
+  create(createUserDto: CreateUserDto) {
+    this.users.push({ id: +new Date(), ...createUserDto });
   }
 
-  update(id: string, updateUserDto: Users) {
+  update(id: string, updateUserDto: UpdateUserDto) {
     const index = this.users.findIndex((item) => item.id === +id);
     if (index !== -1) {
       this.users[index] = { ...this.users[index], ...updateUserDto };
