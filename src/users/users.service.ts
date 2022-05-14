@@ -19,7 +19,7 @@ export class UsersService {
     return this.users;
   }
 
-  findOne(id: string) {
+  findOne(id: number) {
     const user = this.users.find((item) => item.id === +id);
     // if (!user) throw new HttpException(`User with id ${id} not found`, HttpStatus.NOT_FOUND);
     if (!user) throw new NotFoundException(`User with id ${id} not found`);
@@ -31,7 +31,7 @@ export class UsersService {
     return createUserDto;
   }
 
-  update(id: string, updateUserDto: UpdateUserDto) {
+  update(id: number, updateUserDto: UpdateUserDto) {
     const index = this.users.findIndex((item) => item.id === +id);
     if (index !== -1) {
       this.users[index] = { ...this.users[index], ...updateUserDto };
@@ -40,7 +40,7 @@ export class UsersService {
     }
   }
 
-  remove(id: string) {
+  remove(id: number) {
     const index = this.users.findIndex((item) => item.id === +id);
     if (index !== -1) {
       this.users.splice(index, 1);

@@ -14,7 +14,7 @@ export class UsersController {
   }
 
   @Get(':id')
-  findById(@Param('id') id: string) {
+  findById(@Param('id') id: number) {
     return this.usersService.findOne(id);
   }
 
@@ -24,12 +24,12 @@ export class UsersController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+  update(@Param('id') id: number, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.update(id, updateUserDto);
   }
 
   @Delete(':id')
-  delete(@Param('id') id: string) {
+  delete(@Param('id') id: number) {
     return this.usersService.remove(id);
   }
 }
