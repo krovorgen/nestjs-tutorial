@@ -28,6 +28,7 @@ export class UsersService {
 
   create(createUserDto: CreateUserDto) {
     this.users.push({ id: +new Date(), ...createUserDto });
+    return createUserDto;
   }
 
   update(id: string, updateUserDto: UpdateUserDto) {
