@@ -4,13 +4,15 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { PaginationQueryDto } from '../common/dto/pagination-query.dto';
 
 @Injectable()
 export class UsersService {
   constructor(@InjectModel(Users.name) private readonly usersModel: Model<Users>) {}
 
-  findAll() {
-    return this.usersModel.find().exec();
+  findAll(paginationQuery: PaginationQueryDto) {
+    const { limit, offset } = paginationQuery;
+    return this.usersModel.find().skip(offset).limit(limit).exec();
   }
 
   async findOne(id: string) {
