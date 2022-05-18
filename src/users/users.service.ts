@@ -2,50 +2,43 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { Users } from './entities/users.entities';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { CreateUserDto } from './dto/create-user.dto';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 
 @Injectable()
 export class UsersService {
-  private users: Users[] = [
-    {
-      id: 1,
-      name: 'Maksim',
-      age: 24,
-      job: 'programmer',
-      hobby: ['games', 'serials'],
-    },
-  ];
+  constructor(@InjectModel(Users.name) private readonly usersModel: Model<Users>) {}
 
   findAll() {
-    return this.users;
+    return this.usersModel.find().exec();
   }
 
-  findOne(id: number) {
-    const user = this.users.find((item) => item.id === +id);
+  async findOne(id: string) {
+    const user = await this.usersModel.findOne({ _id: id }).exec();
     // if (!user) throw new HttpException(`User with id ${id} not found`, HttpStatus.NOT_FOUND);
     if (!user) throw new NotFoundException(`User with id ${id} not found`);
     return user;
   }
 
   create(createUserDto: CreateUserDto) {
-    this.users.push({ id: +new Date(), ...createUserDto });
-    return createUserDto;
+    const user = new this.usersModel(createUserDto);
+    return user.save();
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    const index = this.users.findIndex((item) => item.id === +id);
-    if (index !== -1) {
-      this.users[index] = { ...this.users[index], ...updateUserDto };
-    } else {
+  async update(id: string, updateUserDto: UpdateUserDto) {
+    const existingUser = await this.usersModel.findOneAndUpdate(
+      { _id: id },
+      { $set: updateUserDto },
+      { new: true },
+    );
+    if (!existingUser) {
       throw new NotFoundException(`User with id ${id} not found`);
     }
+    return existingUser;
   }
 
-  remove(id: number) {
-    const index = this.users.findIndex((item) => item.id === +id);
-    if (index !== -1) {
-      this.users.splice(index, 1);
-    } else {
-      throw new NotFoundException(`User with id ${id} not found`);
-    }
+  async remove(id: string) {
+    const user = await this.findOne(id);
+    return user.remove();
   }
 }
